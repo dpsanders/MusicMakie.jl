@@ -1,0 +1,13 @@
+name = "MusicMakie"
+uuid = "cd1e0ee2-c491-43bb-9d2c-3d9abd2dcce7"
+authors = ["David Sanders <dpsanders@gmail.com> and contributors"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

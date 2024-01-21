@@ -4,12 +4,12 @@ using CairoMakie, MusicMakie
 # scale = Scale(C[4], major_scale)
 scale = Scale(E[3], major_scale)
 
-pitches = Base.Iterators.take(scale, 15) |> collect
+pitches = Base.Iterators.take(scale, 3*8-1) |> collect
 
 
 fig, ax = make_canvas()
 
-s = Stave(0, 20, 0, 0.5)
+s = Stave(0, 30, 0, 0.5)
 
 sc = StaveWithClef(s, treble_clef)
 
@@ -24,7 +24,7 @@ fig
 function scale_notes(p::Pitch)
     scale = Scale(p, natural_minor_scale)
 
-    pitches = Base.Iterators.take(scale, 15) |> collect
+    pitches = Base.Iterators.take(scale, 3*8-1) |> collect
 
     return pitches
 end

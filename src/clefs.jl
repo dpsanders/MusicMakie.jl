@@ -7,7 +7,7 @@ struct Clef
 end
 
 const G_clef_symbol = string(Char('\U1D11E'))
-const treble_clef = Clef(G_clef_symbol, 3, G[4])
+const treble_clef = Clef(G_clef_symbol, -2, G[4])
 
 
 function map_to_stave(p::Pitch, clef::Clef = treble_clef)

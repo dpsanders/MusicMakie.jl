@@ -1,44 +1,42 @@
 
 stave_color = :black
 
-"Represents a stave (or staff) with lower left position `(x_min, y_min)` and
-height `h` between each line."
+"""
+    struct Stave
+
+Represents a stave (or staff) with left position `x_min` and
+height `h` between each line.
+`y` is the y position of the center line.
+"""
 struct Stave
     x_min::Float64
     x_max::Float64
-    y_min::Float64
+    y::Float64
     h::Float64
 end
 
 # draw staff lines
 function draw!(ax, s::Stave)
 
-    x_min, x_max, y_min, h = s.x_min, s.x_max, s.y_min, s.h
+    x_min, x_max, h = s.x_min, s.x_max, s.h
 
-    y = y_min
-
-    for i in 0:4
-        lines!(ax, [x_min, x_max], [y, y], color=stave_color)# , alpha=0.5)
-        y += h
+    for y in -2h:h:2h
+        lines!(ax, [x_min, x_max], [s.y + y, s.y + y], color=stave_color)# , alpha=0.5)
     end
 
 end
 
 
 """
-Position 0 is space just under stave (D in treble clef).
-Position 1 is on bottom line (E in treble clef).
+Position 0 is center line.
+Position 1 is the space above it.
 """
-function height(s::Stave, position)
-    return (0.5 * s.h) * (position - 1)
-end
-
-
+height(s::Stave, position) = position * 0.5 * s.h
 
 
 function draw_text!(ax, s::Stave, x, pos, text)
     y = height(s, pos)
-    text!(text, position = Point2(x, y), font = "Bravura",
+    text!(text, position = Point2(x, s.y + y), font = "Bravura",
         fontsize = 85.0,
         align = (:center, :center),
         color=RGBAf(0.0, 0.0, 0.0, 0.6))

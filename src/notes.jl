@@ -25,7 +25,7 @@ function draw_note_head!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
     draw_ellipse!(ax, x, y, w, h, color=color)
 end
 
-function draw_stem!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
+function draw_stem_up!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
     y = height(s, pos)
 
     h = 0.5 * s.h
@@ -34,11 +34,17 @@ function draw_stem!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
     lines!(ax, [x + w, x + w], [y, y + 3 * s.h], color=color, linewidth=5)
 end
 
+function draw_stem_down!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
+    y = height(s, pos)
+
+    h = 0.5 * s.h
+    w = 1.1 * h
+
+    lines!(ax, [x - w, x - w], [y, y - 3 * s.h], color=color, linewidth=5)
+end
+
 # single leger line
 function draw_leger_line!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
-
-    # only draw leger lines for odd positions
-    pos % 2 == 0 && return
 
     y = height(s, pos)
 
@@ -51,32 +57,29 @@ function draw_leger_line!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
 end
 
 function draw_leger_lines!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
-
-    if pos < 0
-        for i in pos:-1
-            draw_leger_line!(ax, s, x, i, color=color)
-        end
+    for i in -6:-2:pos
+        draw_leger_line!(ax, s, x, i, color=color)
     end
 
-    if pos > 9
-        for i in 10:pos
-            draw_leger_line!(ax, s, x, i, color=color)
-        end
+    for i in 6:2:pos
+        draw_leger_line!(ax, s, x, i, color=color)
     end
-
 end
-
-
 
 
 function draw!(ax, s::StaveWithClef, p::Pitch, x; color=RGBAf(0, 0, 1, 0.5))
     pos = map_to_stave(p, s.clef)
-    draw_note_head!(ax, s.stave, x, pos, color=color)
-    draw_stem!(ax, s.stave, x, pos, color=color)
 
-    if pos < 0 || pos > 9
-        draw_leger_lines!(ax, s.stave, x, pos, color=color)
+    draw_leger_lines!(ax, s.stave, x, pos, color=color)
+    draw_note_head!(ax, s.stave, x, pos, color=color)
+
+    if pos > 0
+        draw_stem_down!(ax, s.stave, x, pos, color=color)
+    else
+        draw_stem_up!(ax, s.stave, x, pos, color=color)
     end
+
+
 end
 
 

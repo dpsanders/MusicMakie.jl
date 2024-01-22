@@ -34,11 +34,11 @@ Position 1 is the space above it.
 height(s::Stave, position) = position * 0.5 * s.h
 
 
-function draw_text!(ax, s::Stave, x, pos, text)
+function draw_text!(ax, s::Stave, x, pos, text; fontsize=2.0)
     y = height(s, pos)
     text!(text, position = Point2(x, s.y + y), font = "Bravura",
         # fontsize = 85.0,
-        fontsize = 2.0, 
+        fontsize = fontsize, 
         markerspace = :data,
         align = (:center, :center),
         color=RGBAf(0.0, 0.0, 0.0, 0.6))

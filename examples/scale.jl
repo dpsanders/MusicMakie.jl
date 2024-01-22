@@ -19,12 +19,12 @@ function draw_scale()
 
     sc = StaveWithClef(s, treble_clef)
 
-    x0 = 2
+    x0 = 3
 
-    draw_text!(ax, s, x0, 2, "4")
-    draw_text!(ax, s, x0, -2, "4")
+    draw_text!(ax, s, x0, 2, "4", fontsize=1.5)
+    draw_text!(ax, s, x0, -2, "4", fontsize=1.5)
 
-    x0 += 1
+    x0 += 2
 
     draw!(ax, sc)
     draw!(ax, sc, notes, x0=x0, w=1)

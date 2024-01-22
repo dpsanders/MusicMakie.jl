@@ -125,7 +125,7 @@ function draw!(ax, s::StaveWithClef, notes::Vector{<:Union{Pitch, Note}};
 
         total_duration += n.duration
 
-        if isinteger(total_duration)
+        if isinteger(total_duration)  # whole number of bars, assuming 4/4 time
             draw_bar_line!(ax, s.stave, x)
             x += 1
         end

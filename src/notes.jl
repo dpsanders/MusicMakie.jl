@@ -35,7 +35,7 @@ function draw_stem_up!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
     h = 0.5 * s.h
     w = 1.1 * h
 
-    lines!(ax, [x + w, x + w], [y, y + 3 * s.h], color=color, linewidth=5)
+    lines!(ax, [x + w, x + w], [y, y + 3.5 * s.h], color=color, linewidth=5)
 end
 
 function draw_stem_down!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
@@ -44,7 +44,7 @@ function draw_stem_down!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
     h = 0.5 * s.h
     w = 1.1 * h
 
-    lines!(ax, [x - w, x - w], [y, y - 3 * s.h], color=color, linewidth=5)
+    lines!(ax, [x - w, x - w], [y, y - 3.5 * s.h], color=color, linewidth=5)
 end
 
 # single leger line
@@ -82,7 +82,7 @@ function draw!(ax, s::StaveWithClef, n::Note, x; color=RGBAf(0, 0, 1, 0.5))
 
     if accidental(p) != ♮
         draw_text!(ax, s.stave, x, pos, string(accidental(p)))
-        x += 1
+        x += 0.7
     end
 
     draw_leger_lines!(ax, s.stave, x, pos, color=color)
@@ -126,8 +126,7 @@ function draw!(ax, s::StaveWithClef, notes::Vector{<:Union{Pitch, Note}};
         total_duration += n.duration
 
         if isinteger(total_duration)  # whole number of bars, assuming 4/4 time
-            draw_bar_line!(ax, s.stave, x)
-            x += 1
+            x = draw_bar_line!(ax, s.stave, x)
         end
     end
 

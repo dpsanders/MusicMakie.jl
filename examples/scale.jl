@@ -11,7 +11,7 @@ function draw_scale()
     durations = repeat([1//2, 1//4, 1//4], 10)
 
     @show durations
-    notes = Note.(zip(pitches, durations))
+    notes = [Note(p, d) for (p, d) in zip(pitches, durations)]
 
     fig, ax = make_canvas()
 

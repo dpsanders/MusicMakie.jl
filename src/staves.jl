@@ -37,7 +37,9 @@ height(s::Stave, position) = position * 0.5 * s.h
 function draw_text!(ax, s::Stave, x, pos, text)
     y = height(s, pos)
     text!(text, position = Point2(x, s.y + y), font = "Bravura",
-        fontsize = 85.0,
+        # fontsize = 85.0,
+        fontsize = 2.0, 
+        markerspace = :data,
         align = (:center, :center),
         color=RGBAf(0.0, 0.0, 0.0, 0.6))
 end
@@ -46,5 +48,7 @@ end
 function draw_bar_line!(ax, s::Stave, x)
 
     lines!(ax, [x, x], [s.y - 2*s.h, s.y + 2*s.h], color=stave_color)
+    x += 0.7
 
+    return x
 end

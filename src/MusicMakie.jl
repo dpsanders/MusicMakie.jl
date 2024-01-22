@@ -10,7 +10,8 @@ using CairoMakie: Point2
 using MusicTheory, MusicTheory.PitchNames
 using MusicTheory: tone
 
-export Stave, StaveWithClef, Clef, treble_clef, draw!, map_to_stave, height, make_canvas
+export Stave, StaveWithClef, Clef, treble_clef, draw!, map_to_stave, height, make_canvas,
+    draw_bar_line!
 export make_canvas
 
 const sharp_symbol = "♯"

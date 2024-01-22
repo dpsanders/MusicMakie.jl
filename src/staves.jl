@@ -42,3 +42,9 @@ function draw_text!(ax, s::Stave, x, pos, text)
         color=RGBAf(0.0, 0.0, 0.0, 0.6))
 end
 
+
+function draw_bar_line!(ax, s::Stave, x)
+
+    lines!(ax, [x, x], [s.y - 2*s.h, s.y + 2*s.h], color=stave_color)
+
+end

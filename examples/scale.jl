@@ -7,7 +7,7 @@ function draw_scale()
     scale = Scale(E[3], major_scale)
 
     pitches = Base.Iterators.take(scale, 2*8-1) |> collect
-    notes = pitches ./ 1
+    notes = pitches ./ 2
 
     fig, ax = make_canvas()
 

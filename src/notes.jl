@@ -117,9 +117,18 @@ function draw!(ax, s::StaveWithClef, notes::Vector{<:Union{Pitch, Note}};
 
     x = x0
 
-    for p in notes
-        x = draw!(ax, s, p, x, color=color)
+    total_duration = 0
+
+    for n in notes
+        x = draw!(ax, s, n, x, color=color)
         x += w
+
+        total_duration += n.duration
+
+        if isinteger(total_duration)
+            draw_bar_line!(ax, s.stave, x)
+            x += 1
+        end
     end
 
 end

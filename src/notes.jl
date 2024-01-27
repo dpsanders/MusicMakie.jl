@@ -118,14 +118,14 @@ end
 
 
 
-function draw!(ax, s::StaveWithClef, p::Pitch, x; color = default_color)
+function draw!(ax, s::Stave, p::Pitch, x; color = default_color)
     draw!(ax, s, Note(p, 1//4), x, color=color)
 end
 
 
-function draw!(ax, s::StaveWithClef, n::Note, x; color = default_color)
+function draw!(ax, s::Stave, n::Note, c::Clef, x; color = default_color)
     p = n.pitch
-    pos = map_to_stave(p, s.clef)
+    pos = map_to_stave(p, c)
 
     if accidental(p) != ♮
         draw_text!(ax, s.stave, x, pos, string(accidental(p)), color = default_color)
@@ -141,7 +141,7 @@ function draw!(ax, s::StaveWithClef, n::Note, x; color = default_color)
 
     draw_stem = (duration < 1)
 
-    num_flags = denominator(duration) ÷ 4 - 1
+    num_flags = round(Int, log2(denominator(duration))) - 2
 
     if draw_stem
         if pos > 0
@@ -163,15 +163,13 @@ end
 
 x0 is the left-most position
 """
-function draw!(ax, s::StaveWithClef, notes::Vector{<:Union{Pitch, Note}};
-    x0 = 1.0, w = 1, color = RGBAf(0, 0, 1, 0.5))
-
-    x = x0
+function draw!(ax, s::Stave, c::Clef, notes::Vector{<:Union{Pitch, Note}};
+    x = 1.0, w = 1, color = RGBAf(0, 0, 1, 0.5))
 
     total_duration = 0
 
     for n in notes
-        x = draw!(ax, s, n, x, color=color)
+        x = draw!(ax, s, n, c, x, color=color)
         x += w
 
         total_duration += n.duration
@@ -180,5 +178,7 @@ function draw!(ax, s::StaveWithClef, notes::Vector{<:Union{Pitch, Note}};
             x = draw_bar_line!(ax, s.stave, x)
         end
     end
+
+    return x
 
 end

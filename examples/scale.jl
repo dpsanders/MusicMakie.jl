@@ -9,7 +9,8 @@ function draw_scale()
     pitches = Base.Iterators.take(scale, 2*8-1) |> collect
 
     # durations = repeat([1//2, 1//4, 1//4], 10)
-    durations = repeat([1//4, 1//8, 1//8], 10)
+    # durations = repeat([1//4, 1//8, 1//8], 10)
+    durations = repeat([1//8, 1//16, 1//16], 10)
 
     # @show durations
     notes = [Note(p, d) for (p, d) in zip(pitches, durations)]
@@ -17,18 +18,17 @@ function draw_scale()
     fig, ax = make_canvas()
 
     s = Stave(0, 30, 0, 0.5)
+    draw!(ax, s)
 
-    sc = StaveWithClef(s, treble_clef)
+    clef = treble_clef
 
-    x0 = 3
+    x = 1
+    x = draw!(ax, s, clef, x)
 
-    draw_text!(ax, s, x0, 2, "4", fontsize=1.5)
-    draw_text!(ax, s, x0, -2, "4", fontsize=1.5)
+    time_signature = TimeSignature(4, 4)
+    x = draw!(ax, s, time_signature, x)
 
-    x0 += 2
-
-    draw!(ax, sc)
-    draw!(ax, sc, notes, x0=x0, w=1)
+    draw!(ax, s, notes, x = x, w = 1)
 
     # @show notes
 

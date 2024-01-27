@@ -15,8 +15,8 @@ function map_to_stave(p::Pitch, clef::Clef = treble_clef)
 end
 
 
-function draw!(ax, s, c::Clef, x)
-    draw_text!(ax, s, x, c.position, c.symbol)
+function draw!(s, c::Clef, x)
+    draw_text!(s, x, c.position, c.symbol)
     x += 2
     return x
 end

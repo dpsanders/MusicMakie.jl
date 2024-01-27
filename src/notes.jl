@@ -1,4 +1,6 @@
 
+const default_color = RGBAf(0, 0, 1, 0.7)
+
 function draw_circle!(ax, cx, cy, r)
     θs = 0:0.1:2π
     xs = cx .+ r.*cos.(θs)
@@ -7,7 +9,7 @@ function draw_circle!(ax, cx, cy, r)
     poly!(ax, xs, ys, color=:blue)
 end
 
-function draw_ellipse!(ax, cx, cy, a, b; color=RGBAf(0, 0, 1, 0.5), filled=true)
+function draw_ellipse!(ax, cx, cy, a, b; color = default_color, filled=true)
     θs = 0:0.1:2π
     xs = cx .+ a .* cos.(θs)
     ys = cy .+ b .* sin.(θs)
@@ -20,7 +22,7 @@ function draw_ellipse!(ax, cx, cy, a, b; color=RGBAf(0, 0, 1, 0.5), filled=true)
 end
 
 
-function draw_note_head!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5), filled=true)
+function draw_note_head!(ax, s::Stave, x, pos; color = default_color, filled=true)
     y = height(s, pos)
 
     h = 0.5 * s.h
@@ -29,26 +31,55 @@ function draw_note_head!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5), filled
     draw_ellipse!(ax, x, y, w, h; filled=filled, color=color)
 end
 
-function draw_stem_up!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
+# l is the length of the stem in multiples of the stave gap
+function draw_stem_up!(ax, s::Stave, x, pos; l = 3.5, color = default_color)
     y = height(s, pos)
-
     h = 0.5 * s.h
     w = 1.1 * h
 
-    lines!(ax, [x + w, x + w], [y, y + 3.5 * s.h], color=color, linewidth=5)
+    lines!(ax, [x + w, x + w], [y, y + l * s.h], color=color, linewidth=5)
 end
 
-function draw_stem_down!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
+function draw_flag_down!(ax, s::Stave, x, pos; l = 3.5, color = default_color)
     y = height(s, pos)
-
     h = 0.5 * s.h
     w = 1.1 * h
 
-    lines!(ax, [x - w, x - w], [y, y - 3.5 * s.h], color=color, linewidth=5)
+    d = 0.8  # distance to draw flag out
+
+    lines!(ax,
+        [x + w, x + w + (d * s.h)],
+        [y + l * s.h, y + (l - d) * s.h],
+        color = color,
+        linewidth=3)
 end
+
+function draw_stem_down!(ax, s::Stave, x, pos; l = 3.5, color = default_color)
+    y = height(s, pos)
+    h = 0.5 * s.h
+    w = 1.1 * h
+
+    lines!(ax, [x - w, x - w], [y, y - l * s.h], color = color, linewidth=5)
+end
+
+function draw_flag_up!(ax, s::Stave, x, pos; l = 3.5, color = default_color)
+    y = height(s, pos)
+    h = 0.5 * s.h
+    w = 1.1 * h
+
+    d = 0.8  # distance to draw flag out
+
+    lines!(ax,
+        [x - w, x - w + (d * s.h)],
+        [y - l * s.h, y - (l - d) * s.h],
+        color = color,
+        linewidth=3)
+end
+
+
 
 # single leger line
-function draw_leger_line!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
+function draw_leger_line!(ax, s::Stave, x, pos; color = default_color)
 
     y = height(s, pos)
 
@@ -60,45 +91,65 @@ function draw_leger_line!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
     lines!(ax, [x - r * w, x + r * w], [y, y], color=stave_color)
 end
 
-function draw_leger_lines!(ax, s::Stave, x, pos; color=RGBAf(0, 0, 1, 0.5))
+function draw_leger_lines!(ax, s::Stave, x, pos; color = default_color)
     for i in -6:-2:pos
-        draw_leger_line!(ax, s, x, i, color=color)
+        draw_leger_line!(ax, s, x, i, color = color)
     end
 
     for i in 6:2:pos
-        draw_leger_line!(ax, s, x, i, color=color)
+        draw_leger_line!(ax, s, x, i, color = color)
+    end
+end
+
+## draw n flags
+function draw_flags_up!(ax, s::Stave, x, pos, n; color = default_color)
+
+    for i in 1:n
+        draw_flag_up!(ax, s, x, pos + i, color = color)
+    end
+end
+
+function draw_flags_down!(ax, s::Stave, x, pos, n; color = default_color)
+
+    for i in 1:n
+        draw_flag_down!(ax, s, x, pos - i, color = color)
     end
 end
 
 
-function draw!(ax, s::StaveWithClef, p::Pitch, x; color=RGBAf(0, 0, 1, 0.5))
+
+function draw!(ax, s::StaveWithClef, p::Pitch, x; color = default_color)
     draw!(ax, s, Note(p, 1//4), x, color=color)
 end
 
 
-function draw!(ax, s::StaveWithClef, n::Note, x; color=RGBAf(0, 0, 1, 0.5))
+function draw!(ax, s::StaveWithClef, n::Note, x; color = default_color)
     p = n.pitch
     pos = map_to_stave(p, s.clef)
 
     if accidental(p) != ♮
-        draw_text!(ax, s.stave, x, pos, string(accidental(p)))
+        draw_text!(ax, s.stave, x, pos, string(accidental(p)), color = default_color)
         x += 0.7
     end
 
-    draw_leger_lines!(ax, s.stave, x, pos, color=color)
+    draw_leger_lines!(ax, s.stave, x, pos, color = color)
 
     duration = n.duration
 
-    filled = (duration == 1 // 4)
+    filled = (duration <= 1 // 4)
     draw_note_head!(ax, s.stave, x, pos, color=color, filled = filled)
 
-    draw_stem = (duration == 1 // 2) || (duration == 1 // 4)
+    draw_stem = (duration < 1)
+
+    num_flags = denominator(duration) ÷ 4 - 1
 
     if draw_stem
         if pos > 0
             draw_stem_down!(ax, s.stave, x, pos, color=color)
+            draw_flags_up!(ax, s.stave, x, pos, num_flags, color=color)
         else
             draw_stem_up!(ax, s.stave, x, pos, color=color)
+            draw_flags_down!(ax, s.stave, x, pos, num_flags, color=color)
         end
     end
 
@@ -112,7 +163,7 @@ end
 
 x0 is the left-most position
 """
-function draw!(ax, s::StaveWithClef, notes::Vector{<:Union{Pitch, Note}}; 
+function draw!(ax, s::StaveWithClef, notes::Vector{<:Union{Pitch, Note}};
     x0 = 1.0, w = 1, color = RGBAf(0, 0, 1, 0.5))
 
     x = x0

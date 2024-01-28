@@ -32,31 +32,42 @@ function draw_note_head!(s::Stave, x, pos; color = default_color, filled=true)
 end
 
 # l is the length of the stem in multiples of the stave gap
-function draw_stem_up!(s::Stave, x, pos; l = 3.5, color = default_color)
+function draw_stem_up!(s::Stave, x, pos; end_y = nothing, color = default_color)
+
+    l = 3.5  # default length = 1 octave
+
     y = height(s, pos)
     h = 0.5 * s.h
     w = 1.1 * h
 
-    end_height = y + l * s.h
-    # stems shouldn't end below the midline
-    end_height < s.y && (end_height = s.y)
+    if isnothing(end_y)
+        end_y = y + l * s.h
+        # stems shouldn't end below the midline
+        end_y < s.y && (end_y = s.y)
+    end
 
-    lines!(s.ax, [x + w, x + w], [y, end_height], color=color, linewidth=5)
+    lines!(s.ax, [x + w, x + w], [y, end_y], color=color, linewidth=5)
 
-    return end_height
+    return end_y
 end
 
-function draw_stem_down!(s::Stave, x, pos; l = 3.5, color = default_color)
+function draw_stem_down!(s::Stave, x, pos; end_y = nothing, color = default_color)
+
+    l = 3.5  # default length = 1 octave
+
     y = height(s, pos)
     h = 0.5 * s.h
     w = 1.1 * h
      # stems shouldn't end above the midline
-    end_height = y - l * s.h
-    end_height > s.y && (end_height = s.y)
 
-    lines!(s.ax, [x - w, x - w], [y, end_height], color = color, linewidth=5)
+    if isnothing(end_y)
+        end_y = y - l * s.h
+        end_y > s.y && (end_y = s.y)
+    end
 
-    return end_height
+    lines!(s.ax, [x - w, x - w], [y, end_y], color = color, linewidth=5)
+
+    return end_y
 end
 
 function draw_flag_down!(s::Stave, x, pos, start; color = default_color)

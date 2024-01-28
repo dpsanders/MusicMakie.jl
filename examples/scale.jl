@@ -13,8 +13,8 @@ function draw_scale()
     pitches = Base.Iterators.take(scale, 2*8-1) |> collect
 
     # durations = repeat([1//2, 1//4, 1//4], 10)
-    # durations = repeat([1//4, 1//8, 1//8], 10)
-    durations = repeat([1//8, 1//16, 1//16], 10)
+    durations = repeat([1//4, 1//8, 1//8], 10)
+    # durations = repeat([1//8, 1//16, 1//16], 10)
 
     # @show durations
     notes = [Note(p, d) for (p, d) in zip(pitches, durations)]

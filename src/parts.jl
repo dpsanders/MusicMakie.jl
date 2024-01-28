@@ -88,6 +88,11 @@ function Base.push!(p::Part, obj::Note)
 
     else
 
+        if !isempty(p.to_beam)
+            draw_beamed!(p)
+            p.to_beam = []
+        end
+
         p.x = draw!(p.s, obj, p.clef, p.x)
         p.current_time += obj.duration
 

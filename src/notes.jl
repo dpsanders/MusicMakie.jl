@@ -37,10 +37,29 @@ function draw_stem_up!(s::Stave, x, pos; l = 3.5, color = default_color)
     h = 0.5 * s.h
     w = 1.1 * h
 
-    lines!(s.ax, [x + w, x + w], [y, y + l * s.h], color=color, linewidth=5)
+    end_height = y + l * s.h
+    # stems shouldn't end below the midline
+    end_height < s.y && (end_height = s.y)
+
+    lines!(s.ax, [x + w, x + w], [y, end_height], color=color, linewidth=5)
+
+    return end_height
 end
 
-function draw_flag_down!(s::Stave, x, pos; l = 3.5, color = default_color)
+function draw_stem_down!(s::Stave, x, pos; l = 3.5, color = default_color)
+    y = height(s, pos)
+    h = 0.5 * s.h
+    w = 1.1 * h
+     # stems shouldn't end above the midline
+    end_height = y - l * s.h
+    end_height > s.y && (end_height = s.y)
+
+    lines!(s.ax, [x - w, x - w], [y, end_height], color = color, linewidth=5)
+
+    return end_height
+end
+
+function draw_flag_down!(s::Stave, x, pos, start; color = default_color)
     y = height(s, pos)
     h = 0.5 * s.h
     w = 1.1 * h
@@ -49,20 +68,12 @@ function draw_flag_down!(s::Stave, x, pos; l = 3.5, color = default_color)
 
     lines!(s.ax,
         [x + w, x + w + (d * s.h)],
-        [y + l * s.h, y + (l - d) * s.h],
+        [start, start - (d * s.h)],
         color = color,
         linewidth=3)
 end
 
-function draw_stem_down!(s::Stave, x, pos; l = 3.5, color = default_color)
-    y = height(s, pos)
-    h = 0.5 * s.h
-    w = 1.1 * h
-
-    lines!(s.ax, [x - w, x - w], [y, y - l * s.h], color = color, linewidth=5)
-end
-
-function draw_flag_up!(s::Stave, x, pos; l = 3.5, color = default_color)
+function draw_flag_up!(s::Stave, x, pos, start; color = default_color)
     y = height(s, pos)
     h = 0.5 * s.h
     w = 1.1 * h
@@ -71,9 +82,24 @@ function draw_flag_up!(s::Stave, x, pos; l = 3.5, color = default_color)
 
     lines!(s.ax,
         [x - w, x - w + (d * s.h)],
-        [y - l * s.h, y - (l - d) * s.h],
+        [start, start + (d * s.h)],
         color = color,
         linewidth=3)
+end
+
+## draw n flags
+function draw_flags_up!(s::Stave, x, pos, n, start; color = default_color)
+
+    for i in 1:n
+        draw_flag_up!(s, x, pos + i, start + i/3, color = color)
+    end
+end
+
+function draw_flags_down!(s::Stave, x, pos, n, start; color = default_color)
+
+    for i in 1:n
+        draw_flag_down!(s, x, pos - i, start - i/3, color = color)
+    end
 end
 
 
@@ -101,20 +127,7 @@ function draw_leger_lines!(s::Stave, x, pos; color = default_color)
     end
 end
 
-## draw n flags
-function draw_flags_up!(s::Stave, x, pos, n; color = default_color)
 
-    for i in 1:n
-        draw_flag_up!(s, x, pos + i, color = color)
-    end
-end
-
-function draw_flags_down!(s::Stave, x, pos, n; color = default_color)
-
-    for i in 1:n
-        draw_flag_down!(s, x, pos - i, color = color)
-    end
-end
 
 
 
@@ -128,7 +141,7 @@ function draw!(s::Stave, n::Note, c::Clef, x; color = default_color)
     pos = map_to_stave(p, c)
 
     if accidental(p) != ♮
-        draw_text!(s, x, pos, string(accidental(p)), color = default_color)
+        draw_text!(s, x, pos, string(accidental(p)), color = color)
         x += 0.7
     end
 
@@ -145,11 +158,12 @@ function draw!(s::Stave, n::Note, c::Clef, x; color = default_color)
 
     if draw_stem
         if pos > 0
-            draw_stem_down!(s, x, pos, color=color)
-            draw_flags_up!(s, x, pos, num_flags, color=color)
+            # start is height at which stem starts / ends
+            start = draw_stem_down!(s, x, pos, color=color)
+            draw_flags_up!(s, x, pos, num_flags, start, color=color)
         else
-            draw_stem_up!(s, x, pos, color=color)
-            draw_flags_down!(s, x, pos, num_flags, color=color)
+            start = draw_stem_up!(s, x, pos, color=color)
+            draw_flags_down!(s, x, pos, num_flags, start, color=color)
         end
 
         if num_flags > 0
@@ -162,29 +176,3 @@ function draw!(s::Stave, n::Note, c::Clef, x; color = default_color)
     return x
 end
 
-
-
-"""Draw notes given by positions, where
-0 is the space just under stave, 1 is on the bottom line, etc.
-
-x0 is the left-most position
-"""
-function draw!(s::Stave, c::Clef, notes::Vector{<:Union{Pitch, Note}};
-    x = 1.0, w = 1, color = RGBAf(0, 0, 1, 0.5))
-
-    total_duration = 0
-
-    for n in notes
-        x = draw!(s, n, c, x, color=color)
-        x += w
-
-        total_duration += n.duration
-
-        if isinteger(total_duration)  # whole number of bars, assuming 4/4 time
-            x = draw_bar_line!(s, x)
-        end
-    end
-
-    return x
-
-end

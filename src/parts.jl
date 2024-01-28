@@ -36,6 +36,7 @@ function draw_beam!(p::Part)
 
     for n in p.to_beam
         pos = map_to_stave(n.pitch, p.clef)
+        draw_leger_lines!(p.s, p.x, pos, color = colorant"red")
         draw_note_head!(p.s, p.x, pos, color=colorant"red")
         draw_stem_up!(p.s, p.x, pos, end_y = beam_position)
 

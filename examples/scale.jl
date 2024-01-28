@@ -2,13 +2,14 @@ using Revise, MusicTheory, MusicTheory.PitchNames
 using CairoMakie
 using MusicMakie
 
-    
+import MusicMakie.draw!
+
+
 
 function draw_scale()
 
     # scale = Scale(C[4], major_scale)
     scale = Scale(G[3], major_scale)
-
     pitches = Base.Iterators.take(scale, 2*8-1) |> collect
 
     # durations = repeat([1//2, 1//4, 1//4], 10)
@@ -18,22 +19,18 @@ function draw_scale()
     # @show durations
     notes = [Note(p, d) for (p, d) in zip(pitches, durations)]
 
+    setup = [TrebleClef(), TimeSignature(4, 4)]
+
     fig, ax = make_canvas()
+    p = Part(ax)
 
-    s = Stave(ax, 0, 30, 0, 0.5)
-    draw!(s)
+    for obj in setup
+        push!(p, obj)
+    end
 
-    clef = treble_clef
-
-    x = 1
-    x = draw!(s, clef, x)
-
-    time_signature = TimeSignature(4, 4)
-    x = draw!(s, time_signature, x)
-
-    draw!(s, clef, notes, x = x, w = 1)
-
-    # @show notes
+    for obj in notes
+        push!(p, obj)
+    end
 
     fig
 end

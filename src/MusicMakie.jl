@@ -10,9 +10,9 @@ using CairoMakie: Point2
 using MusicTheory, MusicTheory.PitchNames
 using MusicTheory: tone
 
-export Stave, Clef, treble_clef, draw!, map_to_stave, height, make_canvas,
+export Stave, Clef, TrebleClef, draw!, map_to_stave, height, make_canvas,
     draw_bar_line!, draw_text!,
-    TimeSignature
+    TimeSignature, Part
 export make_canvas
 
 const sharp_symbol = "♯"
@@ -23,6 +23,7 @@ include("staves.jl")
 include("clefs.jl")
 include("notes.jl")
 include("time_signatures.jl")
+include("parts.jl")
 
 
 

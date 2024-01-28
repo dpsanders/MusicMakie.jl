@@ -157,6 +157,8 @@ function draw!(s::Stave, n::Note, c::Clef, x; color = default_color)
         end
     end
 
+    x += 1
+
     return x
 end
 

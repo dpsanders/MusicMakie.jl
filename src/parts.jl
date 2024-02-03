@@ -100,12 +100,16 @@ end
 function Base.push!(p::Part, obj::Note)
 
     if denominator(obj.duration) > 4
-        if isempty(p.to_beam) || obj.duration == p.to_beam[end].duration
+        # if isempty(p.to_beam) # || obj.duration == p.to_beam[end].duration
             push!(p.to_beam, obj)
+        # end
+    # end
 
-        else # end of beam
+        if sum(n.duration for n in p.to_beam) == 1 // 4
+        # else # end of beam
             draw_beamed!(p)
-            p.to_beam = [obj]
+            p.to_beam = []
+            # p.to_beam = [obj]
         end
 
     else

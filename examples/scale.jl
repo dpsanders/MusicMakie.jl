@@ -14,7 +14,7 @@ function draw_scale()
 
     # durations = repeat([1//2, 1//4, 1//4], 10)
     # durations = repeat([1//4, 1//8, 1//8, 1//8, 1//8], 10)
-    durations = repeat([1//8, 1//16, 1//16], 10)
+    durations = 1 .// repeat([8, 16, 16, 16, 16, 16, 16], 10)
 
     # @show durations
     notes = [Note(p, d) for (p, d) in zip(pitches, durations)]

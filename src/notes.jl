@@ -31,6 +31,17 @@ function draw_note_head!(s::Stave, x, pos; color = default_color, filled=true)
     draw_ellipse!(s, x, y, w, h; filled=filled, color=color)
 end
 
+function stem_x_pos(s::Stave, x, is_up::Bool) 
+    h = 0.5 * s.h
+    w = 1.2 * h
+
+    if is_up
+        return x + w
+    else
+        return x - w
+    end
+end
+
 # l is the length of the stem in multiples of the stave gap
 function draw_stem_up!(s::Stave, x, pos; end_y = nothing, color = default_color)
 
@@ -187,3 +198,21 @@ function draw!(s::Stave, n::Note, c::Clef, x; color = default_color)
     return x
 end
 
+# struct KeySignature
+#     accidentals::Dict{PitchClass, Accidental}
+# end
+
+# # no accidental if the pitch class is the same as in the key signature
+# struct NoteHead
+#     pos::Int
+#     accidental::Union{Nothing,Accidental}
+#     x::Float64
+# end
+
+# # assume stems are vertical
+# struct Stem
+#     is_up::Bool
+#     start::Int
+#     end::Int
+#     x::Float64
+# end
